@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiNotifications.Pages.WeatherForecastDaily"
+             xmlns:model="clr-namespace:MauiNotifications.Model.WeatherDaily"
+             xmlns:utils="clr-namespace:MauiNotifications.Utils"
+             x:Name="rootPage"
+             xmlns:converters="clr-namespace:MauiNotifications.Converters"
+             xmlns:weatherdaily="clr-namespace:MauiNotifications.Model.WeatherDaily"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:aloha="clr-namespace:AlohaKit.Animations;assembly=AlohaKit.Animations"
+             xmlns:templates="clr-namespace:MauiNotifications.Template"
+             Title="..."
+             x:DataType="model:WeatherDailyResponse">
+    <ContentPage.Resources>
+
+        <DataTemplate x:Key="hotTopicCurrentInfo" x:DataType="model:HotTopicMessage">
+            <Label VerticalOptions="Center" TextColor="White" MaxLines="2" FontFamily="OpenSansLight" FontSize="18" Text="{Binding Message}"></Label>
+        </DataTemplate>
+
+        <DataTemplate x:Key="hotTopicAlert" x:DataType="model:HotTopicMessage">
+            <Frame BorderColor="#00ffffff" BackgroundColor="#80ff0000" Padding="10" CornerRadius="5">
+                <Grid ColumnDefinitions="0.1*,0.9*">
+                    <Image Source="{FontImageSource Glyph={Static utils:IconFont.Alert},FontFamily='Material'}"></Image>
+                    <Label Grid.Column="1" FontSize="17" FlexLayout.AlignSelf="Center" Margin="10,0" VerticalOptions="Center" TextColor="White" MaxLines="2" FontFamily="OpenSansLight" Text="{Binding Alert.description.localized}"></Label>
+                </Grid>
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped_Alert"></TapGestureRecognizer>
+                </Frame.GestureRecognizers>
+            </Frame>
+        </DataTemplate>
+        <ResourceDictionary>
+            <aloha:FadeToAnimation x:Key="FakeNavBarFadeOut" Target="{x:Reference FakeNavBar}" Opacity="0" Duration="500"/>
+            <aloha:FadeToAnimation x:Key="FakeNavBarFadeIn" Target="{x:Reference FakeNavBar}" Opacity="1" Duration="500" />
+            <aloha:FadeToAnimation x:Key="WeatherDataOpacityAnimation" Target="{x:Reference weatherData}" Opacity="1" Duration="1000" Delay="1000" />
+            <toolkit:IsEqualConverter x:Key="IsEqualConverter" />
+            <x:Single x:Key="Zero">0</x:Single>
+            <x:Int32 x:Key="ZeroInt">0</x:Int32>
+            <x:Double x:Key="ZeroDouble">0</x:Double>
+            <x:Int32 x:Key="ThunderStormThreshold">50</x:Int32>
+            <x:Boolean x:Key="True">true</x:Boolean>
+            <x:Boolean x:Key="False">false</x:Boolean>
+            <Color x:Key="PrecipRain">#3871fc</Color>
+            <Color x:Key="PrecipSnow">#00b8f1</Color>
+            <Color x:Key="PrecipIce">#ea44fc</Color>
+            <Color x:Key="LightningColor">#faa911</Color>
+            <x:Double x:Key="PrecipOpacityMax">1.0</x:Double>
+            <x:Double x:Key="PrecipOpacityMin">0.15</x:Double>
+            <x:Double x:Key="PrecipVolumeFontSize">0.15</x:Double>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Black}}"></toolkit:StatusBarBehavior>
+    </ContentPage.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="88"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="250" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid
+                Padding="10"
+                HeightRequest="250"
+                HorizontalOptions="Fill"
+                ColumnDefinitions="0.3*,0.7*"
+                RowDefinitions="Auto, 180"
+                TranslationY="{Binding RelativeScrollY, 
+                                Source={x:Reference scrollBehavior}, 
+                                Converter={converters:ScrollValueConverter}, 
+                                ConverterParameter='-5.5;0;200;false;0'}">
+                <Grid.Behaviors>
+                    <aloha:AnimateProgressDouble 
+                        TargetProperty="VisualElement.Opacity"
+                        Progress="{Binding ScrollY, Source={x:Reference scrollBehavior}}"
+                        Minimum="0"
+                        Maximum="180"
+                        From="1"
+                        To="0"/>
+                </Grid.Behaviors>
+
+                <VerticalStackLayout Grid.ColumnSpan="2">
+                    <CarouselView 
+                        ItemTemplate="{templates:HotTopicDataTemplateSelector Alert={StaticResource hotTopicAlert}, CurrentInfo={StaticResource hotTopicCurrentInfo}}" 
+                        IndicatorView="hotMessagesIndicator" 
+                        ItemsSource="{Binding HotTopicMessages}"></CarouselView>
+                    <IndicatorView Margin="0, 5, 0, 0" x:Name="hotMessagesIndicator"
+                           IndicatorColor="LightGray"
+                           SelectedIndicatorColor="DarkGray"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Row="1" Margin="0,0,0,-50" Spacing="15" VerticalOptions="StartAndExpand">
+
+                    <Label HorizontalOptions="Center"
+                       TextColor="White"
+                       FontAttributes="Bold" Grid.RowSpan="3" FontSize="55" Text="{Binding Current.temperature}">
+                    </Label>
+
+                    <Image WidthRequest="90" Source="{Binding Current.IconCodeName}" Grid.Column="2" VerticalOptions="End"></Image>
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Row="1" Padding="0,0,5,0" x:Name="weatherData" Grid.Column="1" VerticalOptions="StartAndExpand" Spacing="10" Opacity="0">
+                    <VerticalStackLayout.Triggers>
+                        <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding Current.Loaded}"  Value="true">
+                            <DataTrigger.EnterActions>
+                                <aloha:BeginAnimation Animation="{StaticResource WeatherDataOpacityAnimation}" />
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </VerticalStackLayout.Triggers>
+
+                    <FlexLayout JustifyContent="SpaceBetween" Direction="Row">
+
+                        <Label TextColor="White" MaximumWidthRequest="200"
+                           VerticalOptions="Center"
+                           MaxLines="2"
+                           FontFamily="OpenSansLight" FontSize="35" Text="{Binding Current.phrase}"></Label>
+
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                            <Label HorizontalOptions="Center" LineBreakMode="CharacterWrap" TextColor="White" VerticalOptions="Center" FontSize="20" Text="{Binding Current.wind}"></Label>
+                            <Label TextColor="White" x:Name="windDirLbl" VerticalOptions="Center" FontFamily="Material" FontSize="70" Text="{x:Static utils:IconFont.ArrowDownThin}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Current.Loaded}"  Value="true">
+                                        <DataTrigger.EnterActions>
+                                            <aloha:BeginAnimation Animation="{aloha:RotateToAnimation Delay=2000, 
+                                                    Target={x:Reference windDirLbl}, Easing=BounceOut, Rotation={Binding BindingContext.Current.wind.direction.degrees, Source={x:Reference rootPage}}, Duration=1500 }" />
+                                        </DataTrigger.EnterActions>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </VerticalStackLayout>
+
+                    </FlexLayout>
+
+                    <VerticalStackLayout Spacing="10">
+
+                        <VerticalStackLayout.Resources>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="16"></Setter>
+                                <Setter Property="TextColor" Value="White"></Setter>
+                                <Setter Property="FontFamily" Value="Material"></Setter>
+                            </Style>
+                        </VerticalStackLayout.Resources>
+
+                        <FlexLayout Direction="Row" JustifyContent="SpaceAround">
+
+                            <Label VerticalOptions="Center" Text="{Binding Current.relativeHumidityString}"></Label>
+
+                            <Label VerticalOptions="Center" Text="{Binding Current.precipitationSummary.past24Hours}"></Label>
+
+                        </FlexLayout>
+
+                        <FlexLayout Direction="Row" JustifyContent="SpaceBetween">
+
+                            <Label VerticalOptions="Center" Text="{Binding Current.visibility}"></Label>
+
+                            <Label VerticalOptions="Center" Text="{Binding Current.pressure}"></Label>
+
+                            <Label VerticalOptions="Center" Text="{Binding Current.cloudCoverValue}"></Label>
+
+                        </FlexLayout>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Grid>
+
+            <ScrollView Grid.RowSpan="2" Margin="0,88,0,0" x:Name="scroll" VerticalScrollBarVisibility="Never">
+                <ScrollView.Behaviors>
+                    <aloha:ScrollViewScrollBehavior x:Name="scrollBehavior"></aloha:ScrollViewScrollBehavior>
+                </ScrollView.Behaviors>
+                <VerticalStackLayout Margin="0,172,0,0">
+                    <ActivityIndicator x:Name="loader" HorizontalOptions="Center" IsRunning="true" />
+                    <CollectionView ItemsSource="{Binding forecasts}" Loaded="CollectionView_Loaded">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="model:Forecast">
+                                <Frame
+                                    CornerRadius="10"
+                                    HasShadow="True"
+                                    BorderColor="{Binding BackgroundColor}" 
+                                    BackgroundColor="{Binding BackgroundColor}" 
+                                    Padding="0, 10, 10, 0" HeightRequest="150" Margin="{Binding Margin}">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"></TapGestureRecognizer>
+                                    </Frame.GestureRecognizers>
+                                    <Grid ColumnDefinitions="0.3*,0.7*" RowDefinitions="0.45*,0.45*,0.1*">
+                                        <VerticalStackLayout Grid.RowSpan="2" Padding="10,0,0,0">
+                                            <Label FontSize="19" Text="{Binding date, StringFormat='{0:ddd d. M.}'}" Margin="0,5"></Label>
+                                            <HorizontalStackLayout Spacing="10" VerticalOptions="End">
+                                                <Label 
+                                                    VerticalOptions="Center"
+                                                    FontSize="30" Text="{Binding temperature.maximum}"
+                                                    TextColor="{Binding temperature.maximum.Color}" />
+
+                                                <Label FontSize="25" 
+                                                   Text="{Binding temperature.minimum}" 
+                                                   TextColor="{Binding temperature.minimum.Color}" />
+
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Spacing="5">
+                                                <Label FontSize="25" VerticalOptions="Center" Text="{Static utils:IconFont.ArrowDownThin}" Rotation="{Binding day.wind.direction.degrees}" FontFamily="Material"></Label>
+                                                <Label VerticalOptions="Center" Text="{Binding day.wind.SpeedInMs}"></Label>
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout
+                                                IsVisible="{Binding ThunderStormProbability, Converter={toolkit:CompareConverter ComparingValue={StaticResource ThunderStormThreshold}, ComparisonOperator=Greater, TrueObject=true, FalseObject=false}}"
+                                                Spacing="5">
+                                                <Label TextColor="{StaticResource LightningColor}" FontSize="25" VerticalOptions="Center" Text="{Static utils:IconFont.LightningBolt}" FontFamily="Material" ></Label>
+                                                <Label VerticalOptions="Center" Text="{Binding ThunderStormProbability, StringFormat='{0} %'}"></Label>
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+
+                                        <Grid Grid.RowSpan="2" Grid.Column="1" ColumnDefinitions="0.3*,0.7*" RowDefinitions="*,*">
+                                            <Image HeightRequest="50" Source="{Binding day.Icon}"></Image>
+                                            <Image HeightRequest="50" Grid.Row="1" Grid.RowSpan="2" Source="{Binding night.Icon}"></Image>
+                                            <Grid Grid.Column="1" Grid.RowSpan="2" RowDefinitions="*,*,*" ColumnDefinitions="25,*,*,*">
+                                                <Label 
+                                                    Opacity="{Binding AvgRainVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Text="{Static utils:IconFont.Water}" FontFamily="Material" TextColor="{StaticResource PrecipRain}" FontSize="20" />
+                                                <Label 
+                                                    Opacity="{Binding AvgSnowVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Row="1" Text="{Static utils:IconFont.Snowflake}" FontFamily="Material" TextColor="{StaticResource PrecipSnow}" FontSize="20" />
+                                                <Label 
+                                                    Opacity="{Binding AvgIceVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Row="2" Text="{Static utils:IconFont.Skate}" FontFamily="Material" TextColor="{StaticResource PrecipIce}" FontSize="20" />
+
+                                                <Label 
+                                                    Opacity="{Binding AvgRainVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Column="1" Text="{Binding AvgRainProbability,StringFormat='{0}%'}" FontSize="Small" />
+                                                <Label
+                                                    Opacity="{Binding AvgRainVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Column="2" Text="{Binding AvgRainVolume,StringFormat='{0} mm'}" FontSize="Small" />
+                                                <Label 
+                                                    Opacity="{Binding AvgRainVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Column="3" Text="{Binding AvgRainHours,StringFormat='{0} h'}" FontSize="Small" />
+
+
+                                                <Label 
+                                                    Opacity="{Binding AvgSnowVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Row="1" Grid.Column="1" Text="{Binding AvgSnowProbability,StringFormat='{0}%'}" FontSize="Small" />
+
+                                                <Label 
+                                                    Opacity="{Binding AvgSnowVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Row="1" Grid.Column="2" Text="{Binding AvgSnowVolume,StringFormat='{0} cm'}" FontSize="Small" />
+
+                                                <Label 
+                                                    Opacity="{Binding AvgSnowVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Row="1" Grid.Column="3" Text="{Binding AvgSnowHours,StringFormat='{0} h'}" FontSize="Small" />
+
+
+                                                <Label
+                                                    Opacity="{Binding AvgIceVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Row="2" Grid.Column="1" Text="{Binding AvgIceProbability,StringFormat='{0}%'}" FontSize="Small" />
+
+                                                <Label 
+                                                    Opacity="{Binding AvgIceVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Row="2" Grid.Column="2" Text="{Binding AvgIceVolume,StringFormat='{0} cm'}" FontSize="Small" />
+
+                                                <Label 
+                                                    Opacity="{Binding AvgIceVolume, Converter={toolkit:CompareConverter ComparingValue={StaticResource ZeroDouble}, ComparisonOperator=Greater, TrueObject={StaticResource PrecipOpacityMax}, FalseObject={StaticResource PrecipOpacityMin}}}"
+                                                    HorizontalTextAlignment="Center" VerticalOptions="Center" Grid.Row="2" Grid.Column="3" Text="{Binding AvgIceHours,StringFormat='{0} h'}" FontSize="Small" />
+
+                                            </Grid>
+                                        </Grid>
+                                        <BoxView 
+                                        Grid.ColumnSpan="2" 
+                                        Grid.Row="2"
+                                        CornerRadius="0"
+                                        Opacity=".5"
+                                        Loaded="BoxView_Loaded"
+                                        HorizontalOptions="Start" 
+                                        VerticalOptions="End"
+                                        WidthRequest="2"
+                                        ClassId="{Binding totalLiquid}"
+                                        Color="{StaticResource PrecipRain}" 
+                                        HeightRequest="4"></BoxView>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+
+        <FlexLayout 
+            x:Name="FakeNavBar"
+            Direction="Row"
+            JustifyContent="SpaceBetween"
+            Margin="10,0"
+            Opacity="0">
+            <FlexLayout.Triggers>
+                <DataTrigger TargetType="FlexLayout"
+                                Binding="{Binding ScrollY, 
+                                        Source={x:Reference scrollBehavior}, 
+                                        Converter={converters:ComparisonConverter},
+                                        ConverterParameter='170;>'}"
+                                Value="true">
+                    <DataTrigger.EnterActions>
+                        <aloha:BeginAnimation Animation="{StaticResource FakeNavBarFadeIn}" />
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <aloha:BeginAnimation Animation="{StaticResource FakeNavBarFadeOut}" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </FlexLayout.Triggers>
+
+            <Label FlexLayout.Order="1" FontAttributes="Bold" VerticalOptions="Center" FontSize="55" Text="{Binding Current.temperature}" TextColor="{StaticResource White}"></Label>
+            <Label FontFamily="OpenSansLight" VerticalOptions="Center" FontSize="30" Text="{Binding Current.phrase}" TextColor="{StaticResource White}"></Label>
+            <!--<Label
+                Text="{Binding Current.phrase}" 
+                FontSize="18"
+                Margin="10,0"
+                TextColor="{StaticResource White}"
+                LineBreakMode="TailTruncation"
+                FlexLayout.AlignSelf="Center"
+                FlexLayout.Grow="1" />-->
+
+        </FlexLayout>
+    </Grid>
+</ContentPage>

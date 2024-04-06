@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiNotifications.Pages.FindLocation"
+             xmlns:model="clr-namespace:MauiNotifications.Model"
+             Title="FindLocation">
+    <ScrollView>
+        <VerticalStackLayout Margin="10">
+            <Entry Placeholder="Zadejte místo" x:Name="locationText"></Entry>
+
+            <Grid RowSpacing="10" ColumnSpacing="10" RowDefinitions="auto" ColumnDefinitions="0.5*,0.5*">
+                <Button Text="Search" Clicked="Button_Clicked">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding Source={x:Reference locationText}, Path=Text.Length}" Value="0">
+                            <Setter Property="IsEnabled" Value="False"></Setter>
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+                <Button x:Name="btnCurrLoc" Text="Current position" BackgroundColor="{DynamicResource Secondary}" TextColor="Blue" Clicked="Button_CurrPosition_Clicked" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.5,0,100,100" Grid.Column="1"></Button>
+            </Grid>
+                        
+
+            <ListView x:Name="list" x:DataType="model:GeoLocationResult" HasUnevenRows="True" SelectionMode="Single" ItemSelected="ListView_ItemSelected">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal" Spacing="10" Margin="10,10">
+                                <Label HeightRequest="30" FontSize="20" TextColor="Silver" VerticalOptions="Center" Text="{Binding  address.countryCode}"></Label>
+                                <StackLayout Orientation="Vertical" HorizontalOptions="EndAndExpand" HeightRequest="60">
+                                    <Label HorizontalOptions="End" FontSize="17" VerticalOptions="Center" Text="{Binding address.freeformAddress}"></Label>
+                                    <Label HorizontalOptions="End" VerticalOptions="Center" Text="{Binding address.countrySubdivision}"></Label>
+                                    <Label HorizontalOptions="End" VerticalOptions="Center" Text="{Binding address.countrySecondarySubdivision}"></Label>
+                                    <Label HorizontalOptions="End" TextColor="Silver" FontSize="12" VerticalOptions="Center" Text="{Binding address.municipality}"></Label>
+                                </StackLayout>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <ListView x:Name="listReverse" x:DataType="model:ReverseAddress" HasUnevenRows="True" SelectionMode="Single" ItemSelected="ListViewReverse_ItemSelected">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal" Spacing="10" Margin="10,10">
+                                <Label Margin="10" HeightRequest="30" FontSize="20" TextColor="Silver" VerticalOptions="Center" Text="{Binding  address.countryCode}"></Label>
+                                <StackLayout Orientation="Vertical" HorizontalOptions="EndAndExpand" HeightRequest="60">
+                                    <Label HorizontalOptions="End" FontSize="17" VerticalOptions="Center" Text="{Binding address.freeformAddress}"></Label>
+                                    <Label HorizontalOptions="End" VerticalOptions="Center" Text="{Binding address.countrySubdivision}"></Label>
+                                    <Label HorizontalOptions="End" VerticalOptions="Center" Text="{Binding address.municipality}"></Label>
+                                </StackLayout>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

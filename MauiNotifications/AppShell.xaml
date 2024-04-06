@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="MauiNotifications.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:MauiNotifications"
+    xmlns:pages="clr-namespace:MauiNotifications.Pages"
+    xmlns:utils="clr-namespace:MauiNotifications.Utils"
+    Shell.FlyoutBehavior="Disabled">
+
+    <TabBar>
+        <!--<ShellContent
+            Title="Notes"
+            ContentTemplate="{DataTemplate local:MainPage}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="Material" Glyph="{x:Static utils:IconFont.FaceAgent}" />
+            </ShellContent.Icon>
+        </ShellContent>-->
+                
+        <ShellContent
+            Title="Forecast"
+            ContentTemplate="{DataTemplate pages:WeatherForecastDaily}"
+            Icon="{FontImageSource FontFamily='Material', Glyph={x:Static utils:IconFont.WeatherCloudy}}" />
+
+        <ShellContent
+            Title="Minute"
+            ContentTemplate="{DataTemplate pages:WeatherForecastPage}"
+            Icon="{FontImageSource FontFamily='Material', Glyph={x:Static utils:IconFont.WeatherCloudyClock}}" />
+
+        <ShellContent
+            Title="Settings"
+            ContentTemplate="{DataTemplate pages:Location}"
+            Icon="{FontImageSource FontFamily='Material', Glyph={x:Static utils:IconFont.CogOutline}}" />
+
+        <ShellContent
+            Title="Log"
+            ContentTemplate="{DataTemplate pages:Debug}"
+            Icon="{FontImageSource FontFamily='Material', Glyph={x:Static utils:IconFont.File}}" />
+
+        <ShellContent
+            Title="Close"
+            ContentTemplate="{DataTemplate pages:Close}"
+            Icon="{FontImageSource FontFamily='Material', Glyph={x:Static utils:IconFont.Close}}" />
+
+    </TabBar>
+</Shell>

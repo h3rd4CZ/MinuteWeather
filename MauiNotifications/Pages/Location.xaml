@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiNotifications.Pages.Location"
+             xmlns:utils="clr-namespace:MauiNotifications.Utils"
+             xmlns:services="clr-namespace:MauiNotifications.Services"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:DataType="services:LocationPreference"
+             Title="Nastavení">
+    <Grid Margin="10" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*"></ColumnDefinition>
+            <ColumnDefinition Width="0.5*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Label VerticalOptions="Center" Text="Vyhledat místo"/>
+        <VerticalStackLayout VerticalOptions="Center" Grid.Column="1">
+            <ImageButton  HorizontalOptions="End" Clicked="SetLocationImageButton_Clicked" Source="{FontImageSource Color={DynamicResource Primary}, FontFamily='Material', Glyph={x:Static utils:IconFont.MapMarker}}"></ImageButton>
+            <Label FontAttributes="Italic" HorizontalOptions="End" FontSize="10" Text="{Binding addressName}"/>
+        </VerticalStackLayout>
+
+        <Label VerticalOptions="Center" Grid.Row="1" HorizontalOptions="Start" Text="Use current tracking position"/>
+        <Switch IsToggled="{Binding isTrackingPosition}" x:Name="useCurrLocation" Grid.Row="1" Grid.Column="1" VerticalOptions="Start" HorizontalOptions="End" Toggled="useCurrLocation_Toggled" ></Switch>
+
+        <Label VerticalOptions="Center" Grid.Row="2" FontSize="Caption" Text="LAT"/>
+        <Label Text="{Binding lat}" Grid.Column="1" Grid.Row="2" HorizontalOptions="End" ></Label>
+
+        <Label VerticalOptions="Center" Grid.Row="3" FontSize="Caption" Text="LON"/>
+        <Label Text="{Binding lon}" Grid.Column="1" Grid.Row="3" HorizontalOptions="End" ></Label>
+
+        <Label VerticalOptions="Center" Grid.Row="4" FontSize="Caption" Text="Notification Weekday"/>
+        <TimePicker ClassId="1" Time="{Binding notificationFrom}" PropertyChanged="TimePicker_PropertyChanged" HorizontalOptions="Start" Grid.Row="4" Grid.Column="1"></TimePicker>
+        <TimePicker ClassId="2" Time="{Binding notificationTo}" PropertyChanged="TimePicker_PropertyChanged" HorizontalOptions="End" Grid.Row="4" Grid.Column="1"></TimePicker>
+
+        <Label VerticalOptions="Center" Grid.Row="5" FontSize="Caption" Text="Notification Weekend"/>
+        <TimePicker ClassId="3" Time="{Binding notificationFromWeekend}" PropertyChanged="TimePicker_PropertyChanged" HorizontalOptions="Start" Grid.Row="5" Grid.Column="1"></TimePicker>
+        <TimePicker ClassId="4" Time="{Binding notificationToWeekend}" PropertyChanged="TimePicker_PropertyChanged" HorizontalOptions="End" Grid.Row="5" Grid.Column="1"></TimePicker>
+
+        <Label VerticalOptions="Center" Grid.Row="6" HorizontalOptions="Start" Text="System notifications granted"/>
+        <Switch IsToggled="{Binding AreNotificationEnabled}" x:Name="sysNotificationsGranted" Grid.Row="6" Grid.Column="1" VerticalOptions="Start" HorizontalOptions="End" Toggled="sysNotifications_Toggled" ></Switch>
+
+        <Label VerticalOptions="Center" Grid.Row="7" HorizontalOptions="Start" Text="Start / Stop notifications"/>
+        <Switch IsToggled="{Binding notificationsOn}"  x:Name="notificationsOn" Grid.Row="7" Grid.Column="1" VerticalOptions="Start" HorizontalOptions="End"  Toggled="notificationOn_Toggled" ></Switch>
+
+        <Label VerticalOptions="Center" Grid.Row="8" FontSize="Caption" Text="Next Schedule"/>
+        <Label Text="{Binding nextScheduleTime}" Grid.Column="1" Grid.Row="8" HorizontalOptions="End" ></Label>
+
+        <Label VerticalOptions="Center" Grid.Row="9" FontSize="Caption" Text="Geofencing"/>
+        <ImageButton Grid.Row="9" Grid.Column="1" Clicked="Geofencing_Clicked" HorizontalOptions="End" Source="{FontImageSource Color={DynamicResource Primary}, FontFamily='Material', Glyph={x:Static utils:IconFont.LocationEnter}}"></ImageButton>
+
+        <Label VerticalOptions="Center" Grid.Row="10" FontSize="Caption" Text="Exact alarms"/>
+        <ImageButton Grid.Row="10" Grid.Column="1"  Clicked="ImageButton_Clicked" HorizontalOptions="End" Source="{FontImageSource Color={DynamicResource Primary}, FontFamily='Material', Glyph={x:Static utils:IconFont.CloudQuestion}}"></ImageButton>
+
+        <Label VerticalOptions="Center" Grid.Row="11" HorizontalOptions="Start" Text="Wind Score©"/>
+        <Switch x:Name="windScore" Grid.Row="11" Grid.Column="1" VerticalOptions="Start" HorizontalOptions="End" Toggled="windScore_Toggled" ></Switch>
+
+        <!--<Button VerticalOptions="End" Grid.ColumnSpan="2" Grid.Row="9" Text="Save" Clicked="SavePreference"></Button>-->
+
+    </Grid>
+
+</ContentPage>

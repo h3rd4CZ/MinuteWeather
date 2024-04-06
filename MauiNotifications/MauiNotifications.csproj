@@ -1,0 +1,229 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net7.0-android</TargetFrameworks>
+		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+		<OutputType>Exe</OutputType>
+		<RootNamespace>MauiNotifications</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<!-- Display name -->
+		<ApplicationTitle>Minute weather</ApplicationTitle>
+
+		<!-- App Identifier -->
+		<ApplicationId>com.heriser.minuteweather</ApplicationId>
+		<ApplicationIdGuid>4b3259a8-2e5d-4616-af74-892caa15d834</ApplicationIdGuid>
+
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
+		<AndroidKeyStore>True</AndroidKeyStore>
+		<AndroidSigningKeyStore>myapp.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyAlias>key</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>Heslo.1234</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>Heslo.1234</AndroidSigningStorePass>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|AnyCPU'">
+	  <RunAOTCompilation>False</RunAOTCompilation>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<!-- App Icon -->
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" Color="#333232" />
+		
+		<!-- Splash Screen -->
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#4f5D73" BaseSize="128,128" />
+
+		<!-- Images -->
+		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
+		<MauiImage Update="Resources\Images\notificonsmall.svg" BaseSize="168,208" />
+		<MauiImage Update="Resources\Images\notificon.svg" BaseSize="168,208" />
+
+		<!-- Custom Fonts -->
+		<MauiFont Include="Resources\Fonts\*" />
+
+		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <MauiXaml Remove="Resources\Styles\themes.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\AppIcon\appicon.svg" />
+	  <None Remove="Resources\Fonts\materialdesignicons-webfont.ttf" />
+	  <None Remove="Resources\Fonts\OpenSans-Light.ttf" />
+	  <None Remove="Resources\Images\notificon.svg" />
+	  <None Remove="Resources\Images\notificonAlert.svg" />
+	  <None Remove="Resources\Images\notificonAlertBig.svg" />
+	  <None Remove="Resources\Images\notificonSmall.svg" />
+	  <None Remove="Resources\Images\weather\w1.svg" />
+	  <None Remove="Resources\Images\weather\w10.svg" />
+	  <None Remove="Resources\Images\weather\w11.svg" />
+	  <None Remove="Resources\Images\weather\w12.svg" />
+	  <None Remove="Resources\Images\weather\w13.svg" />
+	  <None Remove="Resources\Images\weather\w14.svg" />
+	  <None Remove="Resources\Images\weather\w15.svg" />
+	  <None Remove="Resources\Images\weather\w16.svg" />
+	  <None Remove="Resources\Images\weather\w17.svg" />
+	  <None Remove="Resources\Images\weather\w18.svg" />
+	  <None Remove="Resources\Images\weather\w19.svg" />
+	  <None Remove="Resources\Images\weather\w2.svg" />
+	  <None Remove="Resources\Images\weather\w20.svg" />
+	  <None Remove="Resources\Images\weather\w21.svg" />
+	  <None Remove="Resources\Images\weather\w22.svg" />
+	  <None Remove="Resources\Images\weather\w23.svg" />
+	  <None Remove="Resources\Images\weather\w24.svg" />
+	  <None Remove="Resources\Images\weather\w25.svg" />
+	  <None Remove="Resources\Images\weather\w26.svg" />
+	  <None Remove="Resources\Images\weather\w29.svg" />
+	  <None Remove="Resources\Images\weather\w3.svg" />
+	  <None Remove="Resources\Images\weather\w30.svg" />
+	  <None Remove="Resources\Images\weather\w31.svg" />
+	  <None Remove="Resources\Images\weather\w32.svg" />
+	  <None Remove="Resources\Images\weather\w33.svg" />
+	  <None Remove="Resources\Images\weather\w34.svg" />
+	  <None Remove="Resources\Images\weather\w35.svg" />
+	  <None Remove="Resources\Images\weather\w36.svg" />
+	  <None Remove="Resources\Images\weather\w37.svg" />
+	  <None Remove="Resources\Images\weather\w38.svg" />
+	  <None Remove="Resources\Images\weather\w39.svg" />
+	  <None Remove="Resources\Images\weather\w4.svg" />
+	  <None Remove="Resources\Images\weather\w40.svg" />
+	  <None Remove="Resources\Images\weather\w41.svg" />
+	  <None Remove="Resources\Images\weather\w42.svg" />
+	  <None Remove="Resources\Images\weather\w43.svg" />
+	  <None Remove="Resources\Images\weather\w44.svg" />
+	  <None Remove="Resources\Images\weather\w5.svg" />
+	  <None Remove="Resources\Images\weather\w6.svg" />
+	  <None Remove="Resources\Images\weather\w7.svg" />
+	  <None Remove="Resources\Images\weather\w8.svg" />
+	  <None Remove="resources\images\windscore_big.svg" />
+	  <None Remove="Resources\Images\windscore_small.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiIcon Include="Resources\AppIcon\appicon.svg">
+	    <CopyToOutputDirectory></CopyToOutputDirectory>
+	  </MauiIcon>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\weather\w1.svg" />
+	  <MauiImage Include="Resources\Images\weather\w10.svg" />
+	  <MauiImage Include="Resources\Images\weather\w11.svg" />
+	  <MauiImage Include="Resources\Images\weather\w12.svg" />
+	  <MauiImage Include="Resources\Images\weather\w13.svg" />
+	  <MauiImage Include="Resources\Images\weather\w14.svg" />
+	  <MauiImage Include="Resources\Images\weather\w15.svg" />
+	  <MauiImage Include="Resources\Images\weather\w16.svg" />
+	  <MauiImage Include="Resources\Images\weather\w17.svg" />
+	  <MauiImage Include="Resources\Images\weather\w18.svg" />
+	  <MauiImage Include="Resources\Images\weather\w19.svg" />
+	  <MauiImage Include="Resources\Images\weather\w2.svg" />
+	  <MauiImage Include="Resources\Images\weather\w20.svg" />
+	  <MauiImage Include="Resources\Images\weather\w21.svg" />
+	  <MauiImage Include="Resources\Images\weather\w22.svg" />
+	  <MauiImage Include="Resources\Images\weather\w23.svg" />
+	  <MauiImage Include="Resources\Images\weather\w24.svg" />
+	  <MauiImage Include="Resources\Images\weather\w25.svg" />
+	  <MauiImage Include="Resources\Images\weather\w26.svg" />
+	  <MauiImage Include="Resources\Images\weather\w29.svg" />
+	  <MauiImage Include="Resources\Images\weather\w3.svg" />
+	  <MauiImage Include="Resources\Images\weather\w30.svg" />
+	  <MauiImage Include="Resources\Images\weather\w31.svg" />
+	  <MauiImage Include="Resources\Images\weather\w32.svg" />
+	  <MauiImage Include="Resources\Images\weather\w33.svg" />
+	  <MauiImage Include="Resources\Images\weather\w34.svg" />
+	  <MauiImage Include="Resources\Images\weather\w35.svg" />
+	  <MauiImage Include="Resources\Images\weather\w36.svg" />
+	  <MauiImage Include="Resources\Images\weather\w37.svg" />
+	  <MauiImage Include="Resources\Images\weather\w38.svg" />
+	  <MauiImage Include="Resources\Images\weather\w39.svg" />
+	  <MauiImage Include="Resources\Images\weather\w4.svg" />
+	  <MauiImage Include="Resources\Images\weather\w40.svg" />
+	  <MauiImage Include="Resources\Images\weather\w41.svg" />
+	  <MauiImage Include="Resources\Images\weather\w42.svg" />
+	  <MauiImage Include="Resources\Images\weather\w43.svg" />
+	  <MauiImage Include="Resources\Images\weather\w44.svg" />
+	  <MauiImage Include="Resources\Images\weather\w5.svg" />
+	  <MauiImage Include="Resources\Images\weather\w6.svg" />
+	  <MauiImage Include="Resources\Images\weather\w7.svg" />
+	  <MauiImage Include="Resources\Images\weather\w8.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AlohaKit.Animations" Version="1.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="Plugin.LocalNotification" Version="10.1.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Pages\Close.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Debug.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\FindLocation.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\GeofenceSettings.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Location.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Popups\AlertPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Popups\WindScoreInputPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\WeatherForecastDaily.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\WeatherForecastHourly.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\WeatherForecastPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0-maccatalyst'">
+	  <PackageReference Include="CommunityToolkit.Maui">
+	    <Version>5.0.0</Version>
+	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0-ios'">
+	  <PackageReference Include="CommunityToolkit.Maui">
+	    <Version>5.0.0</Version>
+	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0-android'">
+	  <PackageReference Include="CommunityToolkit.Maui">
+	    <Version>5.0.0</Version>
+	  </PackageReference>
+	</ItemGroup>
+
+</Project>

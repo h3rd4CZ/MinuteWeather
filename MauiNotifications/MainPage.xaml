@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:utils="clr-namespace:MauiNotifications.Utils"
+             x:Class="MauiNotifications.MainPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem ClassId="1" Clicked="ToolbarItem_Clicked" IconImageSource="{x:FontImage FontFamily='Material', Glyph={x:Static utils:IconFont.File}}"></ToolbarItem>
+        <ToolbarItem ClassId="2" Clicked="ToolbarItem_Clicked" IconImageSource="{x:FontImage FontFamily='Material', Glyph={x:Static utils:IconFont.CogOutline}}"></ToolbarItem>
+        <ToolbarItem ClassId="3" Clicked="ToolbarItem_Clicked" IconImageSource="{x:FontImage FontFamily='Material', Glyph={x:Static utils:IconFont.WeatherCloudy}}"></ToolbarItem>
+        <ToolbarItem ClassId="4" Clicked="ToolbarItem_Clicked" IconImageSource="{x:FontImage FontFamily='Material', Glyph={x:Static utils:IconFont.WeatherCloudyClock}}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+    
+    <ScrollView>
+        <VerticalStackLayout
+            Spacing="25"
+            Padding="10,10,10,10"
+            VerticalOptions="Center">
+
+            <Border>
+                <Picker x:Name="picker"
+                Title="Select a monkey">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Baboon</x:String>
+                            <x:String>Capuchin Monkey</x:String>
+                            <x:String>Blue Monkey</x:String>
+                            <x:String>Squirrel Monkey</x:String>
+                            <x:String>Golden Lion Tamarin</x:String>
+                            <x:String>Howler Monkey</x:String>
+                            <x:String>Japanese Macaque</x:String>
+                            <x:String>Baboon</x:String>
+                            <x:String>Capuchin Monkey</x:String>
+                            <x:String>Blue Monkey</x:String>
+                            <x:String>Squirrel Monkey</x:String>
+                            <x:String>Golden Lion Tamarin</x:String>
+                            <x:String>Howler Monkey</x:String>
+                            <x:String>Japanese Macaque</x:String>
+                            <x:String>Baboon</x:String>
+                            <x:String>Capuchin Monkey</x:String>
+                            <x:String>Blue Monkey</x:String>
+                            <x:String>Squirrel Monkey</x:String>
+                            <x:String>Golden Lion Tamarin</x:String>
+                            <x:String>Howler Monkey</x:String>
+                            <x:String>Japanese Macaque</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+            </Border>
+
+            <Label x:Name="LocLbl" FontSize="15" TextColor="Red" VerticalOptions="Center"></Label>
+            <Label x:Name="permLbl" FontSize="15" TextColor="Blue" VerticalOptions="Center"></Label>
+
+            <Label
+                Text="Hello, World!"
+                x:Name="permLblStatus"
+                SemanticProperties.HeadingLevel="Level1"
+                FontSize="32"
+                HorizontalOptions="Center" />
+
+            <Label
+                Text="Welcome to .NET Multi-platform App UI"
+                SemanticProperties.HeadingLevel="Level2"
+                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
+                FontSize="18"
+                HorizontalOptions="Center" />
+            <Label x:Name="etiqueta"></Label>
+
+            <Button
+                x:Name="CounterBtn"
+                Text="start Services"
+                SemanticProperties.Hint="Counts the number of times you click"
+                Clicked="OnCounterClicked"
+                HorizontalOptions="Center" />
+
+            <Button Text="Stop Service" Clicked="Button_Clicked"></Button>
+
+            <Button Text="Show Native Message" Clicked="Button_Clicked_1"></Button>
+
+            <Button x:Name="locBtn" Text="Get Location" Clicked="Button_Clicked_2" VerticalOptions="Center"></Button>
+
+            <Button x:Name="alarmBtn" Text="Schedule alarm" Clicked="Button_Clicked_Alarm" VerticalOptions="Center"></Button>
+            <Button x:Name="cancelUpcommingAlarmBtn" Text="Cancel upcomming alarm" Clicked="Button_Clicked_AlarmCancel" VerticalOptions="Center" BackgroundColor="PaleVioletRed"></Button>
+            
+            <Button
+               BackgroundColor="#1d9bf0" 
+               HorizontalOptions="Center"
+               utils:EditorAttached.HasShadow="True"
+               Text="follow">
+                <Button.ImageSource>
+                    <FontImageSource 
+                         FontFamily="Material"
+                         Glyph="{x:Static utils:IconFont.Twitter}"
+                         Size="25" />
+                </Button.ImageSource>
+            </Button>
+
+            <Button Text="Check / request location permission" Clicked="Button_Clicked_3"></Button>
+        </VerticalStackLayout>
+    </ScrollView>
+
+
+</ContentPage>

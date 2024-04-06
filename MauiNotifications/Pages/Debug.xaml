@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiNotifications.Pages.Debug"
+             xmlns:services="clr-namespace:MauiNotifications.Services"
+             xmlns:utils="clr-namespace:MauiNotifications.Utils"
+             Title="Debug">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem ClassId="1" Clicked="DeleteLog" IconImageSource="{x:FontImage FontFamily='Material', Glyph={x:Static utils:IconFont.Delete}}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ScrollView>
+        <CollectionView Margin="10" x:Name="log" x:DataType="services:LogItem">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,5" RowDefinitions="auto,auto" Padding="5">
+                        <Label Text="{Binding date}" FontAttributes="Bold" FontSize="14"></Label>
+                        <Label Grid.Row="1" Text="{Binding log}" FontSize="12"></Label>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </ScrollView>
+</ContentPage>

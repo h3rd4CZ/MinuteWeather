@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiNotifications.Pages.WeatherForecastPage"
+             xmlns:model="clr-namespace:MauiNotifications.Model.Weather"
+             xmlns:utils="clr-namespace:MauiNotifications.Utils"
+             x:DataType="model:WeatherForecastResponse"
+             Title="Weather">
+    <Grid Margin="0"
+          RowDefinitions="Auto,*">
+        <Frame
+            CornerRadius="0"
+            Margin="0,0"
+            Padding="5,10"
+            BorderColor="{AppThemeBinding Dark={StaticResource Black}, Light={StaticResource Primary}}"
+            BackgroundColor="{AppThemeBinding Dark={StaticResource Black}, Light={StaticResource Primary}}">
+
+            <VerticalStackLayout Spacing="10">
+
+                <Border StrokeThickness="0" 
+                        StrokeShape="RoundRectangle 10,10,10,10">
+                    <HorizontalStackLayout VerticalOptions="Center" 
+                                   BackgroundColor="#0dbf5a"
+                                   Spacing="5" Padding="7,7">
+                        <Image VerticalOptions="Center" Source="{x:FontImage Size=Small, Color=White, FontFamily='Material', Glyph={x:Static utils:IconFont.Information}}"></Image>
+                        <Label x:Name="lblSummary"
+                           FontSize="Small"
+                           TextColor="White"
+                           VerticalOptions="Center"
+                           FontAttributes="None">
+                         </Label>
+                    </HorizontalStackLayout>
+                </Border>
+
+                <Border
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 10,10,10,10">
+                    <HorizontalStackLayout VerticalOptions="Center" 
+                                   BackgroundColor="#00b8f1"
+                                   Spacing="5" Padding="7,7">
+                        <Image VerticalOptions="Center" Source="{x:FontImage Size=Small, Color=White, FontFamily='Material', Glyph={x:Static utils:IconFont.Water}}"></Image>
+                        <Label x:Name="lblPrecip"
+                           FontSize="Small"
+                           TextColor="White"
+                           VerticalOptions="Center"
+                           FontAttributes="None">
+                        </Label>
+                    </HorizontalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </Frame>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout>
+                <ActivityIndicator x:Name="loader" HorizontalOptions="Center" IsRunning="true" />
+                <ListView x:Name="list" ItemsSource="{Binding intervals}" SelectionMode="None" HasUnevenRows="True" Loaded="list_Loaded">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="model:Interval">
+                            <ViewCell>
+                                <Grid Padding="10" ColumnDefinitions="0.1*,0.2*,0.4*,0.2*,0.1*" ColumnSpacing="10">
+                                    <Image VerticalOptions="Center" Source="{Binding iconCodePath}" />
+                                    <Label Grid.Column="1" VerticalOptions="Center" FontSize="16" TextColor="Silver" Text="{Binding DateDisplay}"></Label>
+                                    <Label Grid.Column="2" VerticalOptions="Center" FontSize="15" Text="{Binding shortPhrase}" TextColor="{AppThemeBinding Default={Binding HexColor}, Dark=White}"></Label>
+                                    <Label Grid.Column="3" VerticalOptions="Center" FontSize="16" TextColor="Silver" Text="{Binding PrecipInMmPerHour}"></Label>
+                                    <BoxView Grid.Column="4" HorizontalOptions="End" VerticalOptions="Start" WidthRequest="10" HeightRequest="{Binding dbz}" Color="{Binding HexColor}"></BoxView>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

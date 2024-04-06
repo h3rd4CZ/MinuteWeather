@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiNotifications.Pages.GeofenceSettings"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:model="clr-namespace:MauiNotifications.Model.MVVM"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:utils="clr-namespace:MauiNotifications.Utils"
+             xmlns:services="clr-namespace:MauiNotifications.Services"
+             xmlns:converters="clr-namespace:MauiNotifications.Converters"             
+             x:Name="RootPage"
+             x:DataType="model:GeofencePreferenceModel"
+             Title="Geofencing">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="GeofenceActive">#4af76d</Color>
+            <system:Boolean x:Key="TrueValue">True</system:Boolean>
+            <system:Boolean x:Key="FalseValue">False</system:Boolean>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid Margin="0"
+          RowDefinitions="Auto,*,Auto">
+        <Frame
+            CornerRadius="0"
+            Margin="0,0"
+            Padding="5,10"
+            BorderColor="{AppThemeBinding Dark={StaticResource Black}, Light={StaticResource Primary}}"
+            BackgroundColor="{AppThemeBinding Dark={StaticResource Black}, Light={StaticResource Primary}}">
+            <HorizontalStackLayout Spacing="10">
+                <Switch VerticalOptions="Center" OnColor="LightGreen" ThumbColor="AliceBlue" IsToggled="{Binding GeofencingEnabled}">
+                    <Switch.Behaviors>
+                        <toolkit:EventToCommandBehavior x:TypeArguments="ToggledEventArgs" EventName="Toggled" Command="{Binding ToggleGeofenceCommand}"></toolkit:EventToCommandBehavior>
+                    </Switch.Behaviors>
+                </Switch>
+                <Label VerticalOptions="Center" 
+                       Text="{Binding GeofencingEnabled,Converter={toolkit:BoolToObjectConverter TrueObject='Geofencing enabled', FalseObject='Geofencing disabled'}}"
+                       TextColor="{Binding GeofencingEnabled, Converter={toolkit:BoolToObjectConverter TrueObject={StaticResource GeofenceActive}, FalseObject={StaticResource Secondary}}}">
+                </Label>
+            </HorizontalStackLayout>
+        </Frame>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout>
+                <CollectionView ItemsSource="{Binding geofences}" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="services:GeofencePreferencePlace">
+                            <Grid Margin="10, 10, 10, 40" Padding="0,0,10,0" RowDefinitions="0.3*,0.3*,0.3*" ColumnDefinitions="0.2*,0.7*,0.1*" HeightRequest="75">
+                                <VerticalStackLayout Grid.RowSpan="3" Spacing="5">
+                                    <Label 
+                                        x:Name="lblCurrPlace"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        FontFamily="Material" 
+                                        TextColor="{Binding Id, 
+                                                    ConverterParameter={x:Reference RootPage}, 
+                                                    Converter={converters:GeofenceCurrentPlaceToObjectConverter TrueObject={StaticResource GeofenceActive}, FalseObject={StaticResource Gray300}}}"
+                                        Text="{Static utils:IconFont.CheckboxBlankCircle}" FontSize="20">
+                                    </Label>
+
+                                    <Label LineBreakMode="CharacterWrap" FontSize="Micro"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalOptions="Center"   
+                                           Text="{Binding EnterAt}"
+                                           IsVisible="{Binding Id, 
+                                                    ConverterParameter={x:Reference RootPage}, 
+                                                    Converter={converters:GeofenceCurrentPlaceToObjectConverter TrueObject={StaticResource TrueValue}, FalseObject={StaticResource FalseValue}}}">
+                                    </Label>
+
+                                    <Label LineBreakMode="CharacterWrap" FontSize="Micro"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalOptions="Center"
+                                           Text="{Binding LeftAt}"
+                                           IsVisible="{Binding Id, 
+                                                    ConverterParameter={x:Reference RootPage}, 
+                                                    Converter={converters:GeofenceCurrentPlaceToObjectConverter TrueObject={StaticResource FalseValue}, FalseObject={StaticResource TrueValue}}}">
+                                    </Label>
+
+
+                                    <Label FontFamily="Material" FontSize="Medium" HorizontalOptions="Center">
+                                        <Label.Text>
+                                            <Binding Path="Id" 
+                                                             Converter="{converters:GeofenceCurrentPlaceToObjectConverter 
+                                                                TrueObject={x:Static utils:IconFont.MapMarkerRight}, 
+                                                                FalseObject={x:Static utils:IconFont.MapMarkerLeft}}" 
+                                                             ConverterParameter="{x:Reference RootPage}"></Binding>
+                                        </Label.Text>
+                                    </Label>
+
+
+                                </VerticalStackLayout>
+
+                                <Label Grid.Column="1" LineBreakMode="WordWrap" FontSize="18" Text="{Binding AddressName}"></Label>
+                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding LatLon}"></Label>
+                                <Grid Grid.Column="1" ColumnDefinitions="0.7*, 0.3*" Grid.Row="2">
+                                    <Slider
+                                            IsEnabled="{Binding Path=BindingContext.GeofencingEnabled, Source={x:Reference RootPage}}"
+                                            x:Name="radiusSlider"
+                                            VerticalOptions="Center"
+                                            Minimum="{x:Static model:GeofencePreferenceModel.MIN_GEOFENCE_RADIUS}" 
+                                            Maximum="{x:Static model:GeofencePreferenceModel.MAX_GEOFENCE_RADIUS}" 
+                                            Value="{Binding Radius}">
+                                    </Slider>
+                                    <Label Grid.Column="1" VerticalOptions="Center" Text="{Binding Radius, StringFormat='{0} m'}"></Label>
+                                </Grid>
+
+                                <VerticalStackLayout Grid.Column="2" Grid.RowSpan="3" VerticalOptions="Center">
+
+                                    <ImageButton
+                                        Command="{Binding Path=BindingContext.SyncGeofencePlaceCommand, Source={x:Reference RootPage}}"
+                                        CommandParameter="{Binding}"
+                                        WidthRequest="25"
+                                        VerticalOptions="Center">
+                                        <ImageButton.Source>
+                                            <FontImageSource FontFamily="Material" Glyph="{Static utils:IconFont.Sync}">
+                                                <FontImageSource.Color>
+                                                    <AppThemeBinding Dark="{StaticResource White}" Light="{StaticResource Primary}"></AppThemeBinding>
+                                                </FontImageSource.Color>
+                                            </FontImageSource>
+                                        </ImageButton.Source>
+                                    </ImageButton>
+
+                                    <ImageButton
+                                        Command="{Binding Path=BindingContext.DeleteGeofencePlaceCommand, Source={x:Reference RootPage}}"
+                                        CommandParameter="{Binding}"
+                                        WidthRequest="25"
+                                        VerticalOptions="Center">
+                                        <ImageButton.Source>
+                                            <FontImageSource FontFamily="Material" Glyph="{Static utils:IconFont.TrashCan}">
+                                                <FontImageSource.Color>
+                                                    <AppThemeBinding Dark="{StaticResource White}" Light="{StaticResource Primary}"></AppThemeBinding>
+                                                </FontImageSource.Color>
+                                            </FontImageSource>
+                                        </ImageButton.Source>
+                                    </ImageButton>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+        <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
+            <ImageButton Command="{Binding AddGeofencePlaceCommand}">
+                <ImageButton.Source>
+                    <FontImageSource FontFamily="Material" Glyph="{Static utils:IconFont.PlusCircle}">
+                        <FontImageSource.Color>
+                            <AppThemeBinding Dark="{StaticResource White}" Light="{StaticResource Primary}"></AppThemeBinding>
+                        </FontImageSource.Color>
+                    </FontImageSource>
+                </ImageButton.Source>
+            </ImageButton>
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>
