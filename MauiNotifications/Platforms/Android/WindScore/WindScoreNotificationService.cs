@@ -91,16 +91,19 @@ namespace MauiNotifications
 
         private async Task PushWindScore()
         {
-            var score = await ProcessWindScore();
+            var scoreData = await ProcessWindScore();
+
+            var score = scoreData.score;
+            var moveAngle = scoreData.moveAngle;
 
             if (score.HasValue)
             {
                 var scoreValue = score.Value;
-
+                                
                 var request = new NotificationRequest
                 {
                     NotificationId = WS_NOTIF_ID,
-                    Title = scoreValue.ToString(),
+                    Title = $"{scoreValue.ToString()} ({moveAngle}°)",
                     Description = WINDSCORE_NOTIF_TITLE,
                     CategoryType = NotificationCategoryType.Status,
                     Android = new AndroidOptions
@@ -114,7 +117,7 @@ namespace MauiNotifications
             }
         }
 
-        private async Task<decimal?> ProcessWindScore()
+        private async Task<(decimal? score, decimal? moveAngle)> ProcessWindScore()
         {
             var motionPreference = preferenceService.GetWindScoreMotionPreference();
 
@@ -158,11 +161,11 @@ namespace MauiNotifications
                     newPassedPoint.WindDir = lastKnownWind.direction.degrees;
                     newPassedPoint.WindSpeed = lastKnownWind.speed.value;
 
-                    var score = WindScoreProcessor.ComputeScore((decimal)lastKnownWind.direction.degrees, (decimal)course, (decimal)lastKnownWind.speed.value);
+                    var scoreData = WindScoreProcessor.ComputeScore((decimal)lastKnownWind.direction.degrees, (decimal)course, (decimal)lastKnownWind.speed.value);
 
-                    newPassedPoint.Score = score;
+                    newPassedPoint.Score = scoreData.score;
 
-                    return score;
+                    return scoreData;
                 }
                 else throw new InvalidOperationException("No last known wind found");
 
@@ -171,7 +174,7 @@ namespace MauiNotifications
             {
                 await userFileDataService.WriteDataAsync($"WS:ERR at : {DateTime.Now} : {ex}");
 
-                return null;
+                return default;
             }
             finally
             {

@@ -4,7 +4,7 @@ namespace MauiNotifications.Services
 {
     public static class WindScoreProcessor
     {
-        public static decimal ComputeScore(decimal windDir, decimal moveDir, decimal windPower)
+        public static (decimal score, decimal moveAngle) ComputeScore(decimal windDir, decimal moveDir, decimal windPower)
         {
             _ = windDir >= 0 ? true : throw new ArgumentException(nameof(windDir));
             _ = moveDir >= 0 ? true : throw new ArgumentException(nameof(moveDir));
@@ -23,7 +23,9 @@ namespace MauiNotifications.Services
                 _ => throw new InvalidOperationException("Angle is out of range, must be between 0 and 180")
             };
 
-            return Round(angleCoeficient * windPower, 1);
+            return (
+                Round(angleCoeficient * windPower, 1), 
+                Round( windMoveAngle, 1));
         }
     }
 }
