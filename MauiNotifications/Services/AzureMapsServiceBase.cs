@@ -2,7 +2,7 @@
 {
     public class AzureMapsServiceBase
     {
-        protected const string SUBSCRIPTION_KEY = "2P-dULMV40mSm9D-mZIKNIjwG652KgSoyoYlR08EL84";
+        protected const string SUBSCRIPTION_KEY = "<---azure maps subscription key here--->";
         protected HttpClient GetInitClient()
         {
             var client = new HttpClient();
